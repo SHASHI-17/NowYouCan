@@ -1,16 +1,11 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Course } from "@prisma/client";
 import axios from "axios";
-import { Pencil } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 
 import { Button } from "@/components/ui/button";
-import { Combobox } from "@/components/ui/combobox";
 import {
   Form,
   FormControl,
@@ -18,35 +13,36 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
-import { cn } from "@/lib/utils";
+import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
+import { cn } from "@/lib/utils";
+import { Course } from "@prisma/client";
+import { Pencil } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { Input } from "@/components/ui/input";
+import { formatPrice } from "@/lib/format";
 
-interface CategoryFormProps {
-  initialData: Course;
+interface PriceFormProps {
+  intialData: Course;
   courseId: string;
-  options: { label: string; value: string }[];
 }
 
 const formSchema = z.object({
-  categoryId: z.string().min(1),
+  price: z.coerce.number()
 });
 
-export const CategoryForm = ({
-  initialData,
-  courseId,
-  options,
-}: CategoryFormProps) => {
-  const [isEditing, setIsEditing] = useState(false);
+const PriceForm = ({ intialData, courseId }: PriceFormProps) => {
+  const router = useRouter();
   const { toast } = useToast();
 
-  const toggleEdit = () => setIsEditing((current) => !current);
-
-  const router = useRouter();
+  const [isEditing, setIsEditing] = useState(false);
+  const toggleEdit = () => setIsEditing((prev) => !prev);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      categoryId: initialData?.categoryId || "",
+      price: intialData?.price || undefined,
     },
   });
 
@@ -69,22 +65,18 @@ export const CategoryForm = ({
     }
   };
 
-  const selectedOption = options.find(
-    (option) => option.value === initialData.categoryId
-  );
-
   return (
-    <div className="mt-6 border bg-slate-100 rounded-md p-4">
+    <div className="mt-3 border bg-slate-100 rounded-md p-4">
       <div className="font-medium flex items-center justify-between">
-        Course category
-        <Button onClick={toggleEdit} variant="ghost">
+        Course Price
+        <Button variant="ghost" onClick={toggleEdit}>
           {isEditing ? (
             <>Cancel</>
           ) : (
-            <>
+            <div className="flex items-center">
               <Pencil className="h-4 w-4 mr-2" />
-              Edit category
-            </>
+              Edit Price
+            </div>
           )}
         </Button>
       </div>
@@ -92,25 +84,29 @@ export const CategoryForm = ({
         <p
           className={cn(
             "text-sm mt-2",
-            !initialData.categoryId && "text-slate-500 italic"
+            !intialData.price && "text-slate-500 italic"
           )}
         >
-          {selectedOption?.label || "No category"}
+          {intialData.price ? formatPrice(intialData.price as number) : "No price"}
         </p>
       )}
       {isEditing && (
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-4 mt-4"
+            className="space-y-4 mt-3"
           >
             <FormField
               control={form.control}
-              name="categoryId"
+              name="price"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Combobox {...field} options={options} />
+                    <Input type='number' step={'0.01'}
+                      {...field}
+                      disabled={isSubmitting}
+                      placeholder="Set a price for your course"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -127,3 +123,5 @@ export const CategoryForm = ({
     </div>
   );
 };
+
+export default PriceForm;
