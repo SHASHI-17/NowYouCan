@@ -1,28 +1,28 @@
 "use client";
 
-import axios from "axios";
-import * as z from "zod";
-
 import { FileUpload } from "@/components/file-upload";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
-import { Chapter, Course, MuxData } from "@prisma/client";
-import { ImageIcon, Pencil, PlusCircle, Video } from "lucide-react";
-import Image from "next/image";
+import MuxPlayer from '@mux/mux-player-react';
+import { Chapter, MuxData } from "@prisma/client";
+import axios from "axios";
+import { Pencil, PlusCircle, Video } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import * as z from "zod";
 
 interface ChapterVideoProps {
-  intialData: Chapter & {muxdata?:MuxData | null};
+  intialData: Chapter & {muxdata?:MuxData | null };
   courseId: string;
   chapterId:string;
+  playback:string;
 }
 
 const formSchema = z.object({
   videoUrl: z.string().min(1),
 });
 
-const ChapterVideo = ({ intialData, courseId ,chapterId}: ChapterVideoProps) => {
+const ChapterVideo = ({ intialData, courseId ,chapterId,playback}: ChapterVideoProps) => {
   const router = useRouter();
   const { toast } = useToast();
 
@@ -46,10 +46,11 @@ const ChapterVideo = ({ intialData, courseId ,chapterId}: ChapterVideoProps) => 
     }
   };
 
+
   return (
     <div className="mt-3 border bg-slate-100 rounded-md p-4">
       <div className="font-medium flex items-center justify-between">
-        Course Image
+        Chapter Video
         <Button variant="ghost" onClick={toggleEdit}>
           {isEditing && <>Cancel</>}
           {!isEditing && !intialData.videoUrl && (
@@ -73,13 +74,14 @@ const ChapterVideo = ({ intialData, courseId ,chapterId}: ChapterVideoProps) => 
           </div>
         ) : (
           <div className=" relative aspect-video mt-1">
-              Video Uploaded !
+              <MuxPlayer playbackId={playback} className="w-full h-full" />
+              {/* <video controls className="w-full h-[300px]" autoPlay={true}  src={intialData.videoUrl}></video> */}
           </div>
         ))}
       {isEditing && (
         <div>
           <FileUpload
-            endpoint="courseImage"
+            endpoint="chapterVideo"
             onChange={(url) => {
               if (url) {
                 onSubmit({ videoUrl: url });
@@ -87,14 +89,14 @@ const ChapterVideo = ({ intialData, courseId ,chapterId}: ChapterVideoProps) => 
             }}
           />
           <div className="text-sm  text-muted-foreground mt-1">
-            upload this chapter's video
+            upload this chapter's video and wait until the video gets started
           </div>
         </div>
       )}
       {
         intialData.videoUrl && !isEditing && (
           <div className="text-sm text-muted-foreground mt-2">
-            Videos can take a few minutes to process. Refresh the page if video doen not appear.
+            Videos can take a few minutes to process. Refresh the page if video doen not appear or even the video is not ready.
           </div>
         )
       }
