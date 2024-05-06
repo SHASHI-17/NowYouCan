@@ -9,6 +9,7 @@ import TitleForm from "./_components/TitleForm";
 import { CategoryForm } from "./_components/category-form";
 import PriceForm from "./_components/price-form";
 import Attachments from "./_components/attachment-form";
+import ChapterForm from "./_components/chapter-form";
 
 const CourseIdPage = async ({ params }: { params: { courseId: string } }) => {
   const { userId } = auth();
@@ -18,16 +19,22 @@ const CourseIdPage = async ({ params }: { params: { courseId: string } }) => {
   const course = await db.course.findUnique({
     where: {
       id: params.courseId,
+      userId
     },
     include:{
       attachments:{
         orderBy:{
           createdAt:'desc'
         }
+      },
+      chapters:{
+        orderBy:{
+          position:'asc'
+        }
       }
     }
   });
-
+  
   const categories = await db.category.findMany({
     orderBy:{
         name:'asc',
@@ -42,6 +49,7 @@ const CourseIdPage = async ({ params }: { params: { courseId: string } }) => {
     course.imageUrl,
     course.price,
     course.categoryId,
+    course?.chapters.some(chapter=>chapter.isPublished),
   ];
 
   const totalFields = requiredFields.length;
@@ -86,7 +94,7 @@ const CourseIdPage = async ({ params }: { params: { courseId: string } }) => {
                     </h2>
                   </div>
                   <div>
-                    TODO:Chapters
+                  <ChapterForm intialData={course} courseId={course.id} />
                   </div>
               </div>
               <div>
@@ -102,6 +110,7 @@ const CourseIdPage = async ({ params }: { params: { courseId: string } }) => {
                       <h2 className="text-xl">Resources & Attachments</h2>
                   </div>
                   <Attachments intialData={course} courseId={course.id} />
+                  
               </div>
         </div>
 
