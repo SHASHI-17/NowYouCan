@@ -99,7 +99,7 @@ const ChapterForm = ({ intialData, courseId }: ChapterFormProps) => {
           </div>
       }
       <div className="font-medium flex items-center justify-between">
-        Course Description
+        Course Chapters
         <Button variant="ghost" onClick={toggleCreating}>
           {isCreating ? (
             <>Cancel</>
