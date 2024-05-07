@@ -89,7 +89,7 @@ const ChapterVideo = ({ intialData, courseId ,chapterId,playback}: ChapterVideoP
             }}
           />
           <div className="text-sm  text-muted-foreground mt-1">
-            upload this chapter's video and wait until the video gets started
+            upload this chapter&apos;s video and wait until the video gets started
           </div>
         </div>
       )}
