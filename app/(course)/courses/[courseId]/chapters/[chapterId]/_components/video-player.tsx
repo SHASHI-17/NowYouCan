@@ -90,22 +90,18 @@ export const VideoPlayer = ({
       {!isLocked && !onAbort && playbackId ? (
         <MuxPlayer
           className={cn("w-full h-full", !isReady && "hidden")}
-          autoPlay
           onCanPlay={() => setIsReady(true)}
           playbackId={playbackId}
           onError={() => setOnAbort(true)}
           onEnded={onEnd}
         />
-      ) : (
-        <video
-          src={videoUrl}
-          onCanPlay={() => setIsReady(true)}
-          title={title}
-          autoPlay
-          className={cn(" w-full h-full bg-black", !isReady && "hidden")}
-          controls onEnded={onEnd}
-        />
-      )}
+      ) : !isLocked &&( <video
+        src={videoUrl}
+        onCanPlay={() => setIsReady(true)}
+        title={title}
+        className={cn(" w-full h-full bg-black", !isReady && "hidden")}
+        controls onEnded={onEnd}
+      />)}
     </div>
   );
 };

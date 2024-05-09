@@ -3,7 +3,7 @@
 import { FileUpload } from "@/components/file-upload";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
-import MuxPlayer from '@mux/mux-player-react';
+import MuxPlayer from "@mux/mux-player-react";
 import { Chapter, MuxData } from "@prisma/client";
 import axios from "axios";
 import { Pencil, PlusCircle, Video } from "lucide-react";
@@ -12,26 +12,35 @@ import { useState } from "react";
 import * as z from "zod";
 
 interface ChapterVideoProps {
-  intialData: Chapter & {muxdata?:MuxData | null };
+  intialData: Chapter & { muxdata?: MuxData | null };
   courseId: string;
-  chapterId:string;
-  playback:string;
+  chapterId: string;
+  playback: string;
 }
 
 const formSchema = z.object({
   videoUrl: z.string().min(1),
 });
 
-const ChapterVideo = ({ intialData, courseId ,chapterId,playback}: ChapterVideoProps) => {
+const ChapterVideo = ({
+  intialData,
+  courseId,
+  chapterId,
+  playback,
+}: ChapterVideoProps) => {
   const router = useRouter();
   const { toast } = useToast();
 
   const [isEditing, setIsEditing] = useState(false);
+  const [onAbort, setOnAbort] = useState(false);
   const toggleEdit = () => setIsEditing((prev) => !prev);
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      await axios.patch(`/api/courses/${courseId}/chapters/${chapterId}`, values);
+      await axios.patch(
+        `/api/courses/${courseId}/chapters/${chapterId}`,
+        values
+      );
       toast({
         title: "Chapter updated",
       });
@@ -45,7 +54,6 @@ const ChapterVideo = ({ intialData, courseId ,chapterId,playback}: ChapterVideoP
       });
     }
   };
-
 
   return (
     <div className="mt-3 border bg-slate-100 rounded-md p-4">
@@ -74,8 +82,19 @@ const ChapterVideo = ({ intialData, courseId ,chapterId,playback}: ChapterVideoP
           </div>
         ) : (
           <div className=" relative aspect-video mt-1">
-              <MuxPlayer playbackId={playback} className="w-full h-full" />
-              {/* <video controls className="w-full h-[300px]" autoPlay={true}  src={intialData.videoUrl}></video> */}
+            {!onAbort ? (
+              <MuxPlayer
+                playbackId={playback}
+                className="w-full h-full"
+                onError={() => setOnAbort(true)}
+              />
+            ) : (
+              <video
+                controls
+                className="w-full h-[300px]"
+                src={intialData.videoUrl}
+              />
+            )}
           </div>
         ))}
       {isEditing && (
@@ -89,17 +108,17 @@ const ChapterVideo = ({ intialData, courseId ,chapterId,playback}: ChapterVideoP
             }}
           />
           <div className="text-sm  text-muted-foreground mt-1">
-            upload this chapter&apos;s video and wait until the video gets started
+            upload this chapter&apos;s video and wait until the video gets
+            started
           </div>
         </div>
       )}
-      {
-        intialData.videoUrl && !isEditing && (
-          <div className="text-sm text-muted-foreground mt-2">
-            Videos can take a few minutes to process. Refresh the page if video doen not appear or even the video is not ready.
-          </div>
-        )
-      }
+      {intialData.videoUrl && !isEditing && (
+        <div className="text-sm text-muted-foreground mt-2">
+          Videos can take a few minutes to process. Refresh the page if video
+          doen not appear or even the video is not ready.
+        </div>
+      )}
     </div>
   );
 };

@@ -41,13 +41,16 @@ export const CourseEnrollButton = ({price,courseId}: CourseEnrollButtonProps) =>
     onClick={()=>{
         navigator.clipboard.writeText(numberToCopy);
         setIsCopied(true);
-        setTimeout(()=>{
-            setIsCopied(false);
-        },1500)
+        // setTimeout(()=>{
+        //     setIsCopied(false);
+        // },1500)
+        toast({
+            title:'Copied'
+        })
     }}
     > Copy this free card to purchase </Button>
-    {isCopied && (<div className="absolute left-[20px] -top-[1px] transition text-sm bg-black/40 text-white p-2 text rounded-full">
+    {/* {isCopied && (<div className="absolute left-[20px] -top-[1px] transition text-sm bg-black/40 text-white p-2 text rounded-full">
         copied
-    </div>)}
+    </div>)} */}
   </div>
 };
