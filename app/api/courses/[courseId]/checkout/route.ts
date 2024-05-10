@@ -1,7 +1,6 @@
 import { db } from "@/lib/db";
 import { stripe } from "@/lib/stripe";
 import { currentUser } from "@clerk/nextjs/server";
-
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
 
@@ -44,7 +43,7 @@ export async function POST(
       {
         quantity: 1,
         price_data: {
-          currency: "USD",
+          currency: "INR",
           product_data: {
             name: course.title,
             description: course.description!,
