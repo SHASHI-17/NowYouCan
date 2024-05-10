@@ -17,6 +17,7 @@ export const CourseEnrollButton = ({price,courseId}: CourseEnrollButtonProps) =>
     const [isCopied,setIsCopied]=useState(false);
     const [isLoading,setIsLoading]=useState(false);
     const {toast}=useToast();
+    
     const onCLick=async ()=>{
         try {
             setIsLoading(true);
