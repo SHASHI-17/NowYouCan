@@ -1,9 +1,13 @@
 import Stripe from "stripe";
 import { NextResponse } from "next/server";
-
+import { loadStripe } from '@stripe/stripe-js';
 import { db } from "@/lib/db";
 import { stripe } from "@/lib/stripe";
 import { currentUser } from "@clerk/nextjs/server";
+
+loadStripe(
+  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
+);
 
 export async function POST(
   req: Request,

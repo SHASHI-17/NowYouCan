@@ -1,5 +1,5 @@
 "use client";
-import { loadStripe } from '@stripe/stripe-js';
+
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { formatPrice } from "@/lib/format";
@@ -11,9 +11,7 @@ interface CourseEnrollButtonProps {
   courseId: string;
 }
 
-loadStripe(
-    process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
-  );
+
 
 export const CourseEnrollButton = ({price,courseId}: CourseEnrollButtonProps) => {
 
