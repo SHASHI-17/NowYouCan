@@ -71,7 +71,7 @@ const Attachments = ({ intialData, courseId }: AttachmentsProps) => {
   return (
     <div className="mt-3 border bg-slate-100 rounded-md p-4">
       <div className="font-medium flex items-center justify-between">
-        Course Image
+        Course Attachments
         <Button variant="ghost" onClick={toggleEdit}>
           {isEditing && <>Cancel</>}
           {!isEditing && (
